@@ -8,6 +8,11 @@ var express = require('express')
 
 app.use(express.static(__dirname + '/views')); // set the static files location for the static html
 app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.use(morgan('dev'));                     // log every request to the console
 app.use(bodyParser());                      // pull information from html in POST
 app.use(methodOverride());                  // simulate DELETE and PUT
@@ -19,11 +24,9 @@ var tone_analyzer = new ToneAnalyzerV3({
  password: 'KdkZkPwKDnbN',
  version_date: '2016-05-19'
 });
-console.log("req.data");
-router.post('/sentiments', function(req, res, next) {
-	console.log("req");
-	console.log(req.data);
-	tone_analyzer.tone({ text: req.data},
+
+router.post('/reviews', function(req, res, next) {
+    tone_analyzer.tone({ text: req.body.text},
  function(err, tone) {
    if (err)
      console.log(err);
@@ -35,5 +38,5 @@ router.post('/sentiments', function(req, res, next) {
 
 app.use('/', router);
 
-app.listen(port);
+app.listen(port, '38.110.19.50');
 console.log('App running on port', port);
